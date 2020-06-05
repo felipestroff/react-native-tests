@@ -1,78 +1,75 @@
 import React, { Component } from 'react';
-import api from '../services/api';
 
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, ImageBackground, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default class Main extends Component {
     static navigationOptions = {
-        title: 'React Native Tests'
+        title: 'Resgate de Pets'
     };
 
     state = {
-        total: 0,
-        data: [],
-        page: 1
+        data: []
     };
 
     componentDidMount() {
-        this.loadProjects();
+        this.loadOptions();
     };
 
-    loadProjects = async (page = 1) => {
-        try {
-            const response = await api.get(`/projects?per_page=3&page=${page}`);
-
-            console.log(response);
-
-            const { data } = response, total = response.length;
-
-            this.setState({
-                data: [...this.state.data, ...data],
-                total,
-                page
-            });
-        }
-        catch (error) {
-            console.log(error);
-        }
-    };
-
-    loadMore = () => {
-        const { page, total } = this.state;
-
-        if (page === total) return;
-
-        const pageNumber = page + 1;
-
-        this.loadProjects(pageNumber);
+    loadOptions = () => {
+        this.setState({
+            data: [
+                {
+                    id: 'dog',
+                    name: 'Adote um cão',
+                    image: require('../images/dog.png')
+                },
+                {
+                    id: 'cat',
+                    name: 'Adote um gato',
+                    image: require('../images/cat.png')
+                },
+                {
+                    id: 'other',
+                    name: 'Outro bichinho...',
+                    image: require('../images/other.png')
+                },
+            ]
+        });
     }
 
     renderItem = ({ item }) => (
-        <View style={styles.projectContainer}>
-            <Text style={styles.projectTitle}>{item.name}</Text>
-            <Text style={styles.projectDescription}>{item.description}</Text>
-
-            <TouchableOpacity
-                style={styles.projectButton}
-                onPress={() => {
-                    this.props.navigation.navigate('Project', { project: item });
-                }}>
-                <Text style={styles.projectButtonText}>Acessar</Text>
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+            onPress={() => {
+                this.props.navigation.navigate('Search', { search: item });
+            }}
+        >
+            <View style={styles.itemContainer}>
+                <View style={styles.imageContainer}>
+                    <Image
+                        style={styles.itemImage}
+                        source={item.image}
+                    />
+                </View>
+                <View style={styles.nameContainer}>
+                    <Text style={styles.itemName}>{item.name}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
     )
 
     render() {
         return (
             <View style={styles.container}>
-                <FlatList
-                    contentContainerStyle={styles.list}
-                    data={this.state.data}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={this.renderItem}
-                    onEndReached={this.loadMore}
-                    onEndReachedThreshold={0.1}
-                />
+                <ImageBackground
+                    source={{ uri: 'https://d339b5nop2tkmp.cloudfront.net/assets/ui-redesign/homepage-banners/banner-4-3c8f1da93f501f150b77ffe81f2ecf135d849720502b3a5af564827823744be7.jpg' }}
+                    style={styles.image}>
+                    <FlatList
+                        contentContainerStyle={styles.list}
+                        data={this.state.data}
+                        keyExtractor={item => item.id}
+                        renderItem={this.renderItem}
+                    />
+                </ImageBackground>
             </View>
         );
     };
@@ -80,50 +77,45 @@ export default class Main extends Component {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1
+    },
+
+    image: {
         flex: 1,
-        backgroundColor: '#FAFAFA'
+        resizeMode: 'cover',
+        justifyContent: 'center'
     },
 
     list: {
         padding: 20
     },
 
-    projectContainer: {
-        backgroundColor: '#FFF',
-        borderWidth: 1,
-        borderColor: '#DDD',
+    itemContainer: {
+        flexDirection: 'row',
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        borderWidth: 2,
         borderRadius: 5,
+        borderColor: '#003226',
         padding: 20,
-        marginBottom: 20
+        marginBottom: 20,
     },
 
-    projectTitle: {
+    imageContainer: {
+        backgroundColor: '#68B403',
+        borderWidth: 5,
+        borderRadius: 50,
+        borderColor: '#003226',
+        padding: 5
+    },
+
+    nameContainer: {
+        justifyContent: 'center',
+        marginLeft: 20
+    },
+
+    itemName: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333'
+        color: '#003226'
     },
-
-    projectDescription: {
-        fontSize: 16,
-        color: '#999',
-        marginTop: 5,
-        lineHeight: 24
-    },
-
-    projectButton: {
-        height: 42,
-        borderRadius: 5,
-        borderWidth: 2,
-        borderColor: '#DA552F',
-        backgroundColor: 'transparent',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 10
-    },
-
-    projectButtonText: {
-        fontSize: 16,
-        color: '#DA552F',
-        fontWeight: 'bold'
-    }
 });

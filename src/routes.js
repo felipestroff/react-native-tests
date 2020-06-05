@@ -2,20 +2,20 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
 
 import Main from './pages/main';
-import Project from './pages/project';
-
-console.log(Project);
+import Search from './pages/search';
+//import Pet from './pages/pet';
 
 const NavStack = createStackNavigator({
     Main,
-    Project
+    Search,
+    //Pet
 },
 {
     defaultNavigationOptions: {
         headerStyle: {
-            backgroundColor: '#DA552F'
+            backgroundColor: '#FFFFFF'
         },
-        headerTintColor: '#FFF'
+        headerTintColor: '#003226'
     }
 });
 
